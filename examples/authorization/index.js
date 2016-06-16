@@ -7,7 +7,7 @@ var authorize = require('./authorize')
   , bodyParser = require('body-parser')
   , express = require('express')
   , http = require('http')
-  , Primus = require('../..')
+  , Primus = require('primus')
   , routes = require('./routes');
 
 //
@@ -26,15 +26,46 @@ app.post('/login', routes.login);
 var server = http.createServer(app)
   , primus = new Primus(server);
 
+
+primus.save('./examples/authorization/public/js/primus-lib.js' , function save(err) {
+  console.log (" index.js > saved = ");
+})
+
+
+
+primus.on('outgoing::open', function () {
+  primus.socket.on('unexpected-response', function (req, res) {
+    console.error(res.statusCode);
+    console.error(res.headers['www-authenticate']);
+
+    //
+    // It's up to us to close the request (although it will time out).
+    //
+    req.abort();
+
+    //
+    // It's also up to us to emit an error so primus can clean up.
+    //
+    primus.socket.emit('error', 'authorization failed: ' + res.statusCode);
+  });
+});
+
+
+
 //
 // Add the authorization hook.
 //
-primus.authorize(authorize);
+primus.authorize(function (req, done) {
+  return done({ statusCode: 403, message: 'Go away!' });
+});
+
 
 //
 // `connection` is only triggered if the authorization succeeded.
 //
 primus.on('connection', function connection(spark) {
+
+  console.log (" index.js >  = CONNECTED " );
   spark.on('data', function received(data) {
     console.log(spark.id, 'received message:', data);
 

@@ -11,6 +11,7 @@
   // connection manually.
   //
   var primus = new Primus({ manual: true });
+  console.log (" client.js > primus.version = " , primus.version);
 
   //
   // For convenience we use the private event `outgoing::url` to append the
@@ -31,6 +32,11 @@
   primus.on('data', function received(data) {
     var li = document.createElement('li');
     output.appendChild(li).textContent = data;
+  });
+
+  
+  primus.on('error', function error(err) {
+    console.error('Something horrible has happened', err.stack);
   });
 
   document.getElementById('open').onclick = function open() {

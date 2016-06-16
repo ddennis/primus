@@ -40,7 +40,8 @@ module.exports = function authorize(req, authorized) {
   // At this point we have decoded and verified the token. Check if it is
   // expired.
   //
-  if (Date.now() > payload.exp) {
+  //if (Date.now() > payload.exp) {
+  if (1 == 1) {
     error = new Error('Expired access token');
     console.error(error.message);
     return authorized(error);
