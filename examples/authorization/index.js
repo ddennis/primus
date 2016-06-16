@@ -33,6 +33,16 @@ primus.save('./examples/authorization/public/js/primus-lib.js' , function save(e
 
 
 
+
+//
+
+/**
+ *
+ * I would assume this blok of code should go here!!
+ * even though the headline in the docs is client: https://github.com/primus/primus/blob/master/README.md#client
+ *
+ */
+
 primus.on('outgoing::open', function () {
   primus.socket.on('unexpected-response', function (req, res) {
     console.error(res.statusCode);
